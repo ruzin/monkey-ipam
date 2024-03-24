@@ -14,11 +14,13 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from azure.storage.blob import BlobServiceClient, BlobClient
 from datetime import datetime
+import os
 
 credentials = DefaultAzureCredential()
 
 # Initialize the BlobServiceClient
-blob_service_client = BlobServiceClient.from_connection_string('DefaultEndpointsProtocol=https;AccountName=ipamstorage;AccountKey=rN1PZ9FSMCSnFV1xB/MM2sogePGpiw2ItFn213Am4f0uhhDNTjyTWvGlA6GT/3G6AgJnKbrCPe+8+AStJwQ6ww==;EndpointSuffix=core.windows.net')
+connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+blob_service_client = BlobServiceClient.from_connection_string(connect_str)
 container_name = 'error-logs'
 blob_container_client = blob_service_client.get_container_client(container_name)
 
