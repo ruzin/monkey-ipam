@@ -10,16 +10,12 @@ function App() {
     async function fetchVNetDetails() {
       try {
         const response = await fetch('/api/get_vnet_details');
-        const data = await response.json(); // Moved up to ensure we always attempt to read JSON
-
-        // Log the response data to the console, successful or not
-        console.log('Response data:', data);
-
         if (!response.ok) {
-          // Throw an error that includes status and response data for detailed debugging
-          throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(data)}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+        const text = await response.text(); // First get the response as text
+        console.log("Raw response:", text); // Log the raw text response
+        const data = JSON.parse(text); // Then attempt to parse it as JSON
         setVnets(data);
       } catch (error) {
         console.error("Failed to fetch VNet details:", error);
@@ -27,7 +23,7 @@ function App() {
       } finally {
         setIsLoading(false);
       }
-    }
+    }    
 
     fetchVNetDetails();
   }, []);
