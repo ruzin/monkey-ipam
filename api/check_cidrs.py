@@ -12,6 +12,7 @@ from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.resource import SubscriptionClient
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import ipaddress
 
 credentials = DefaultAzureCredential()
 

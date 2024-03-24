@@ -29,7 +29,7 @@ function VNetDetails() {
   useEffect(() => {
     const fetchVNetDetails = async () => {
       try {
-        const response = await axios.get('/api/get-vnet-details');
+        const response = await axios.get('/api/get_vnet_details');
         setVnets(response.data.map(vnet => ({
           ...vnet,
           address_space: vnet.address_space.join(', '),
