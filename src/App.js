@@ -10,14 +10,20 @@ function App() {
     async function fetchVNetDetails() {
       try {
         const response = await fetch('/api/get_vnet_details');
+        const data = await response.json(); // Moved up to ensure we always attempt to read JSON
+
+        // Log the response data to the console, successful or not
+        console.log('Response data:', data);
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          // Throw an error that includes status and response data for detailed debugging
+          throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(data)}`);
         }
-        const data = await response.json();
+        
         setVnets(data);
       } catch (error) {
         console.error("Failed to fetch VNet details:", error);
-        setError('Failed to load VNet details.');
+        setError('Failed to load VNet details. Check console for more details.');
       } finally {
         setIsLoading(false);
       }
@@ -33,7 +39,7 @@ function App() {
         <p>Loading...</p>
       ) : error ? (
         <p className="error">{error}</p>
-      ) : (
+      ) : vnets.length > 0 ? (
         <ul>
           {vnets.map((vnet, index) => (
             <li key={index}>
@@ -43,6 +49,8 @@ function App() {
             </li>
           ))}
         </ul>
+      ) : (
+        <p>No VNet details available.</p>
       )}
     </div>
   );

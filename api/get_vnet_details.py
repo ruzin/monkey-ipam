@@ -12,8 +12,23 @@ from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.resource import SubscriptionClient
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from azure.storage.blob import BlobServiceClient, BlobClient
+from datetime import datetime
 
 credentials = DefaultAzureCredential()
+
+# Initialize the BlobServiceClient
+blob_service_client = BlobServiceClient.from_connection_string('DefaultEndpointsProtocol=https;AccountName=ipamstorage;AccountKey=rN1PZ9FSMCSnFV1xB/MM2sogePGpiw2ItFn213Am4f0uhhDNTjyTWvGlA6GT/3G6AgJnKbrCPe+8+AStJwQ6ww==;EndpointSuffix=core.windows.net')
+container_name = 'error-logs'
+blob_container_client = blob_service_client.get_container_client(container_name)
+
+def log_error_to_blob(error_message):
+    # Generate a unique blob name
+    blob_name = f'error_{datetime.utcnow().isoformat()}.txt'
+    blob_client = blob_container_client.get_blob_client(blob_name)
+
+    # Upload the error message to the blob
+    blob_client.upload_blob(error_message)
 
 def fetch_vnet_details(subscription, credentials):
     try:
@@ -42,6 +57,8 @@ def fetch_vnet_details(subscription, credentials):
         return vnets_info
     except Exception as e:
         logging.error(f"Error fetching VNet details for subscription {subscription_id}: {e}")
+        error_message = f"Error fetching VNet details for subscription {subscription_id}: {e}"
+        log_error_to_blob(error_message)
         return []  # Return an empty list in case of error
 
 bp = func.Blueprint()
