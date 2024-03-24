@@ -12,7 +12,7 @@ bp = func.Blueprint()
 @bp.function_name("http_trigger")
 
 
-@bp.route(route="http_trigger", auth_level=func.AuthLevel.ANONYMOUS)
+@bp.route(route="http_trigger", methods=[func.HttpMethod.GET, func.HttpMethod.POST])
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
