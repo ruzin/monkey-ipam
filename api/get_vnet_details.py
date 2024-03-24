@@ -46,7 +46,7 @@ def fetch_vnet_details(subscription, credentials):
 
 bp = func.Blueprint()
 @bp.function_name("get_vnet_details")
-@bp.route(route="get_vnet_details", methods=[func.HttpMethod.GET, func.HttpMethod.POST])
+@bp.route(route="get_vnet_details", auth_level=func.AuthLevel.ANONYMOUS)
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
