@@ -11,7 +11,7 @@ function CheckIP() {
     setOverlaps([]);
     setLoading(true);
     try {
-      const response = await fetch('/api/check-cidrs', {
+      const response = await fetch('/api/check_cidrs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
