@@ -12,25 +12,8 @@ from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.resource import SubscriptionClient
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from azure.storage.blob import BlobServiceClient, BlobClient
-from datetime import datetime
-import os
 
 credentials = DefaultAzureCredential()
-
-# Initialize the BlobServiceClient
-connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
-blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-container_name = 'error-logs'
-blob_container_client = blob_service_client.get_container_client(container_name)
-
-def log_error_to_blob(error_message):
-    # Generate a unique blob name
-    blob_name = f'error_{datetime.utcnow().isoformat()}.txt'
-    blob_client = blob_container_client.get_blob_client(blob_name)
-
-    # Upload the error message to the blob
-    blob_client.upload_blob(error_message)
 
 def fetch_vnet_details(subscription, credentials):
     try:
@@ -59,8 +42,6 @@ def fetch_vnet_details(subscription, credentials):
         return vnets_info
     except Exception as e:
         logging.error(f"Error fetching VNet details for subscription {subscription_id}: {e}")
-        error_message = f"Error fetching VNet details for subscription {subscription_id}: {e}"
-        log_error_to_blob(error_message)
         return []  # Return an empty list in case of error
 
 bp = func.Blueprint()
@@ -79,8 +60,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         for future in as_completed(future_to_vnet):
             vnets_info.extend(future.result())
 
+    # return func.HttpResponse(
+    #     body=json.dumps(vnets_info, indent=2),  # Use indent for more readable JSON
+    #     mimetype="application/json",
+    #     status_code=200
+    # )
     return func.HttpResponse(
-        body=json.dumps(vnets_info, indent=2),  # Use indent for more readable JSON
-        mimetype="application/json",
-        status_code=200
+            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+            status_code=200
     )
