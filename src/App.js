@@ -8,13 +8,14 @@ import Container from '@mui/material/Container';
 import { styled } from '@mui/system';
 import { MsalProvider, useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { msalInstance } from './authConfig';
+import logo from './images/microsoft_small.png';
+
 
 const StyledLink = styled(Link)({
   color: 'white',
   textDecoration: 'none',
   marginRight: '16px',
   padding: '6px 16px',
-  border: '1px solid white',
   borderRadius: '4px',
   '&:hover': {
     color: '#bbdefb',
@@ -22,9 +23,12 @@ const StyledLink = styled(Link)({
   },
 });
 
+
 function SignInSignOutButton() {
   const { instance } = useMsal();
   const isAuthenticated = useIsAuthenticated();
+
+  const username = Username();
 
   const handleLogin = () => {
     instance.loginRedirect().catch(e => console.error(e));
@@ -36,13 +40,18 @@ function SignInSignOutButton() {
 
   return isAuthenticated ? (
     <StyledLink to="/" onClick={handleLogout}>
-      Log out
+      Sign Out | {username}
     </StyledLink>
   ) : (
     <StyledLink to="/" onClick={handleLogin}>
-      Log in
+      Sign In
     </StyledLink>
   );
+}
+
+function Username() {
+  let { accounts } = useMsal();
+  return accounts.length > 0 ? accounts[0].username : '';
 }
 
 function ProtectedRoute({ children }) {
@@ -51,8 +60,43 @@ function ProtectedRoute({ children }) {
 }
 
 function Home() {
+  const isAuthenticated = useIsAuthenticated();
+  const username = Username();
+
   return (
-    <Typography variant="h4" gutterBottom>Welcome to Azure IPAM</Typography>
+    <>
+      <Typography variant="h4" gutterBottom>Welcome to Azure IPAM: {username}</Typography>
+      {isAuthenticated && (
+        <>
+        </>
+      )}
+    </>
+  );
+}
+
+function NavigationBar() {
+  const isAuthenticated = useIsAuthenticated();
+
+  return (
+    <AppBar position="static" sx={{ backgroundColor: '#0078D4' }}>
+      <Toolbar>
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'white', textDecoration: 'none' }}>
+          <img src={logo} alt="Azure Logo" style={{ height: '24px', marginRight: '10px' }} />    </Link>
+
+        <Typography variant="h6" sx={{ color: 'white', flexGrow: 1 }}>
+          <StyledLink style={{ padding: 0, border: 0 }} to="/">Azure IPAM</StyledLink>
+        </Typography>
+        <nav style={{ display: 'flex' }}>
+          {isAuthenticated && (
+            <>
+              <StyledLink to="/vnets">VNet Details</StyledLink>
+              <StyledLink to="/check-ip">CheckIP</StyledLink>
+            </>
+          )}
+          <SignInSignOutButton />
+        </nav>
+      </Toolbar>
+    </AppBar>
   );
 }
 
@@ -60,19 +104,7 @@ function App() {
   return (
     <MsalProvider instance={msalInstance}>
       <Router>
-        <AppBar position="static" sx={{ backgroundColor: '#0078D4' }}>
-          <Toolbar>
-            <Typography variant="h6" sx={{ color: 'white', flexGrow: 1 }}>
-              Azure IPAM
-            </Typography>
-            <nav style={{ display: 'flex' }}>
-              <StyledLink to="/vnets">VNet Details</StyledLink>
-              <StyledLink to="/check-ip">CheckIP</StyledLink>
-              <SignInSignOutButton />
-            </nav>
-          </Toolbar>
-        </AppBar>
-
+        <NavigationBar />
         <Container style={{ marginTop: '20px' }} maxWidth={false}>
           <Routes>
             <Route path="/" element={<Home />} />
