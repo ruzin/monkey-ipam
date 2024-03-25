@@ -62,11 +62,10 @@ function ProtectedRoute({ children }) {
 function Home() {
   const isAuthenticated = useIsAuthenticated();
   const username = Username();
-  const user = username === " " ? " " : ": " + username
 
   return (
     <>
-      <Typography variant="h4" gutterBottom>Welcome to Azure IPAM{user}</Typography>
+      <Typography variant="h4" gutterBottom> Welcome to Azure IPAM{username && `: ${username}`}</Typography>
       {isAuthenticated && (
         <>
         </>
