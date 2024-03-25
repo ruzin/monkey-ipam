@@ -84,7 +84,7 @@ def check_cidr_availability(cidr, vnets_info):
 
 bp = func.Blueprint()
 @bp.function_name("check_cidrs")
-@bp.route(route="check_cidrs")
+@bp.route(route="check_cidrs", methods=[func.HttpMethod.GET, func.HttpMethod.POST])
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
     
