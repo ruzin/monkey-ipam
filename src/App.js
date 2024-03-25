@@ -10,7 +10,7 @@ import { MsalProvider, useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { msalInstance } from './authConfig';
 
 const StyledLink = styled(Link)({
-  color: 'white', // Default color for links in the AppBar
+  color: 'white',
   textDecoration: 'none',
   marginRight: '16px',
   padding: '6px 16px',
@@ -19,14 +19,6 @@ const StyledLink = styled(Link)({
   '&:hover': {
     color: '#bbdefb',
     borderColor: '#bbdefb',
-  },
-});
-
-const HyperlinkStyledLink = styled(Link)({
-  color: '#0078D4', // Hyperlink blue
-  textDecoration: 'underline',
-  '&:hover': {
-    color: '#0056b3', // Darker blue on hover
   },
 });
 
@@ -59,24 +51,8 @@ function ProtectedRoute({ children }) {
 }
 
 function Home() {
-  const isAuthenticated = useIsAuthenticated();
-
   return (
-    <>
-      <Typography variant="h4" gutterBottom>Welcome to Azure IPAM</Typography>
-      {isAuthenticated && (
-        <>
-          <Typography variant="body1" style={{ color: 'green' }}>Login successful</Typography>
-          <Typography variant="h6" style={{ margin: '20px 0 10px' }}>Menu</Typography>
-          <Typography variant="body1">
-            <HyperlinkStyledLink to="/vnets">VNet Details</HyperlinkStyledLink>
-          </Typography>
-          <Typography variant="body1">
-            <HyperlinkStyledLink to="/check-ip">Check IP</HyperlinkStyledLink>
-          </Typography>
-        </>
-      )}
-    </>
+    <Typography variant="h4" gutterBottom>Welcome to Azure IPAM</Typography>
   );
 }
 
@@ -90,7 +66,8 @@ function App() {
               Azure IPAM
             </Typography>
             <nav style={{ display: 'flex' }}>
-              <StyledLink to="/">Home</StyledLink>
+              <StyledLink to="/vnets">VNet Details</StyledLink>
+              <StyledLink to="/check-ip">CheckIP</StyledLink>
               <SignInSignOutButton />
             </nav>
           </Toolbar>
