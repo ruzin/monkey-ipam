@@ -79,7 +79,7 @@ function VNetDetails() {
       <Table sx={{ minWidth: '100%' }} aria-label="VNet details table">
         <TableHead>
           <TableRow>
-            {["VNet Name", "VNet ID", "Subscription Name", "Subscription ID", "Location", "Address Space", "Subnet CIDRs"].map((text) => {
+            {["VNet Name", "Resource Group", "Subscription Name", "Subscription ID", "Location", "Address Space", "Subnet CIDRs"].map((text) => {
               const filterKey = text.replace(/\s/g, '_').toLowerCase();
               return (
                 <TableCell
@@ -133,7 +133,7 @@ function VNetDetails() {
           {filteredVnets.map((vnet, index) => (
             <TableRow key={index}>
               <TableCell>{vnet.vnet_name}</TableCell>
-              <TableCell>{vnet.vnet_id}</TableCell> {/* Apply wrapping style here */}
+              <TableCell>{vnet.vnet_rg}</TableCell> {/* Apply wrapping style here */}
               <TableCell>{vnet.subscription_name}</TableCell>
               <TableCell>{vnet.subscription_id}</TableCell>
               <TableCell>{vnet.location}</TableCell>

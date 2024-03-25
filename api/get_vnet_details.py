@@ -26,14 +26,15 @@ def fetch_vnet_details(subscription, credentials):
         all_vnets = network_client.virtual_networks.list_all()
         for vnet in all_vnets:
             # Fetch details of each subnet within the VNet
-            subnets_detail = network_client.subnets.list(resource_group_name=vnet.id.split("/")[4], virtual_network_name=vnet.name)
+            vnet_rg=vnet.id.split("/")[4]
+            subnets_detail = network_client.subnets.list(resource_group_name=vnet_rg, virtual_network_name=vnet.name)
             subnet_cidrs = [subnet.address_prefix for subnet in subnets_detail if subnet.address_prefix]
 
             vnet_detail = {
                 "subscription_id": subscription_id,
                 "subscription_name": subscription_name,
                 "vnet_name": vnet.name,
-                "vnet_id": vnet.id,
+                "rg_name": vnet_rg,
                 "location": vnet.location,
                 "address_space": vnet.address_space.address_prefixes if vnet.address_space else [],
                 "subnet_cidrs": subnet_cidrs  # Include subnet CIDRs
