@@ -14,7 +14,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import ipaddress
 
-credentials = DefaultAzureCredential()
+credentials = DefaultAzureCredential(exclude_managed_identity_credential=True)
 
 def fetch_vnet_details(subscription, credentials):
     try:
