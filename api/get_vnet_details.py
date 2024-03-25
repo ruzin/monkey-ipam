@@ -34,7 +34,7 @@ def fetch_vnet_details(subscription, credentials):
                 "subscription_id": subscription_id,
                 "subscription_name": subscription_name,
                 "vnet_name": vnet.name,
-                "rg_name": vnet_rg,
+                "vnet_rg": vnet_rg,
                 "location": vnet.location,
                 "address_space": vnet.address_space.address_prefixes if vnet.address_space else [],
                 "subnet_cidrs": subnet_cidrs  # Include subnet CIDRs
