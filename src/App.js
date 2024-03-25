@@ -62,10 +62,11 @@ function ProtectedRoute({ children }) {
 function Home() {
   const isAuthenticated = useIsAuthenticated();
   const username = Username();
+  const user = username === " " ? " " : ": " + username
 
   return (
     <>
-      <Typography variant="h4" gutterBottom>Welcome to Azure IPAM: {username}</Typography>
+      <Typography variant="h4" gutterBottom>Welcome to Azure IPAM{user}</Typography>
       {isAuthenticated && (
         <>
         </>
@@ -80,7 +81,7 @@ function NavigationBar() {
   return (
     <AppBar position="static" sx={{ backgroundColor: '#0078D4' }}>
       <Toolbar>
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'white', textDecoration: 'none' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'white', textDecoration: 'none' }}>
           <img src={logo} alt="Azure Logo" style={{ height: '24px', marginRight: '10px' }} />    </Link>
 
         <Typography variant="h6" sx={{ color: 'white', flexGrow: 1 }}>
