@@ -46,7 +46,7 @@ def fetch_vnet_details(subscription, credentials):
 
 bp = func.Blueprint()
 @bp.function_name("get_vnet_details")
-@bp.route(route="get_vnet_details", auth_level=func.AuthLevel.ANONYMOUS)
+@bp.route(route="get_vnet_details")
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
@@ -60,12 +60,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         for future in as_completed(future_to_vnet):
             vnets_info.extend(future.result())
 
-    # return func.HttpResponse(
-    #     body=json.dumps(vnets_info, indent=2),  # Use indent for more readable JSON
-    #     mimetype="application/json",
-    #     status_code=200
-    # )
     return func.HttpResponse(
-            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-            status_code=200
+        body=json.dumps(vnets_info, indent=2),  # Use indent for more readable JSON
+        mimetype="application/json",
+        status_code=200
     )
