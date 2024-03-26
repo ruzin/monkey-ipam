@@ -145,9 +145,17 @@ function Allocations() {
         <Table aria-label="Allocations Table">
           <TableHead>
             <TableRow>
-              <TableCell>Allocation Name</TableCell>
-              <TableCell>Region</TableCell>
-              <TableCell>CIDR</TableCell>
+              {["Allocation Name", "Region", "CIDR"].map((heading) => (
+                <TableCell
+                  key={heading}
+                  style={{
+                    fontWeight: 'bold',
+                    borderBottom: '3px solid #1976d2' // Bold with blue underline
+                  }}
+                >
+                  {heading}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>

@@ -21,6 +21,9 @@ function VNetDetails() {
     subscription_name: [],
     location: [],
     address_space: [],
+    vnet_name: [],
+    vnet_rg: [],
+    subscription_id: [],
   });
   const [anchorEl, setAnchorEl] = useState(null);
   const [openFilter, setOpenFilter] = useState('');
@@ -91,7 +94,7 @@ function VNetDetails() {
                   }}
                 >
                   {text}
-                  {['subscription_name', 'location', 'address_space'].includes(filterKey) && (
+                  {['subscription_name', 'location', 'address_space', 'vnet_name', 'vnet_rg', 'subscription_id'].includes(filterKey) && (
                     <>
                       <IconButton size="small" onClick={(e) => handleFilterIconClick(e, filterKey)}>
                         <ArrowDropDownIcon />
