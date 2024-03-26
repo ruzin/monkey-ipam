@@ -1,75 +1,168 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  TextField,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 
-function CheckIP() {
-  const [cidr, setCIDR] = useState('');
-  const [result, setResult] = useState(null);
+// Example Azure Regions with short names
+const azureRegions = [
+  { name: 'UK South', value: 'uksouth' },
+  { name: "UK West", value: "ukwest" },
+  { name: "East Asia", value: "eastasia" },
+  { name: "Southeast Asia", value: "southeastasia" },
+  { name: "North Europe", value: "northeurope" },
+  { name: "West Europe", value: "westeurope" },
+  { name: "Japan East", value: "japaneast" },
+  { name: "Japan West", value: "japanwest" },
+  { name: "East US", value: "eastus" },
+  { name: "East US 2", value: "eastus2" },
+  { name: "South Central US", value: "southcentralus" },
+  { name: "West US 2", value: "westus2" },
+  { name: "West US 3", value: "westus3" },
+  { name: "Central US", value: "centralus" },
+  { name: "North Central US", value: "northcentralus" },
+  { name: "West US", value: "westus" },
+  { name: "Brazil South", value: "brazilsouth" },
+  { name: "Australia East", value: "australiaeast" },
+  { name: "Australia Southeast", value: "australiasoutheast" },
+  { name: "South Africa North", value: "southafricanorth" },
+  { name: "South Africa West", value: "southafricawest" },
+  { name: "Central India", value: "centralindia" },
+  { name: "South India", value: "southindia" },
+  { name: "West India", value: "westindia" },
+  { name: "Canada Central", value: "canadacentral" },
+  { name: "Canada East", value: "canadaeast" },
+  { name: "France Central", value: "francecentral" },
+  { name: "Germany West Central", value: "germanywestcentral" },
+  { name: "Norway East", value: "norwayeast" },
+  { name: "Switzerland North", value: "switzerlandnorth" },
+  { name: "UAE North", value: "uaenorth" },
+];
+
+function Allocations() {
+  const [cidr, setCidr] = useState('');
+  const [allocationName, setAllocationName] = useState('');
+  const [region, setRegion] = useState('');
+  const [allocations, setAllocations] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [overlaps, setOverlaps] = useState([]);
 
-  const handleCheckIP = async () => {
-    setResult(null);
-    setOverlaps([]);
+  const fetchAllocations = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/check_cidrs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cidr })
-      });
+      const response = await fetch('/api/get_allocation_details');
       const data = await response.json();
-      if (data.available) {
-        setResult({ message: 'CIDR is available for use', color: 'green' });
-      } else if (data.overlaps) {
-        setResult({ message: 'CIDR is currently in Use', color: 'blue' });
-        setOverlaps(data.overlaps);
-      }
+      setAllocations(data);
     } catch (error) {
-      setResult({ message: 'An error occurred while checking the CIDR.', color: 'red' });
+      console.error('Error fetching allocation details:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const resultStyle = result ? { color: result.color, marginTop: '10px', fontSize: '16px' } : {};
+  useEffect(() => {
+    fetchAllocations();
+  }, []);
+
+  const handleCreate = async () => {
+    setLoading(true);
+    try {
+      await fetch('/api/allocate_cidrs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cidr, allocationName, region }),
+      });
+      fetchAllocations(); // Refresh allocations after adding
+    } catch (error) {
+      console.error('Error creating allocation:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: '20px' }}>
-      <input
-        type="text"
-        value={cidr}
-        onChange={(e) => setCIDR(e.target.value)}
-        placeholder="Enter CIDR"
-        style={{ padding: '10px', marginRight: '10px' }}
+      <Typography variant="h4" gutterBottom>Allocate CIDR</Typography>
+      <TextField
+        label="Allocation Name"
+        variant="outlined"
+        value={allocationName}
+        onChange={(e) => setAllocationName(e.target.value)}
+        style={{ marginRight: '10px' }}
       />
-      
-      <button
-        onClick={handleCheckIP}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#0078d4',
-          color: 'white',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        Check IP
-      </button>
-      {loading && <div style={{ color: 'green', marginTop: '10px' }}>Loading...</div>}
-      {result && <div style={resultStyle}>{result.message}</div>}
-      {!loading && overlaps.length > 0 && (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
-          {overlaps.map((overlap, index) => (
-            <li key={index} style={{ color: 'blue' }}>
-              {overlap.type === 'VNet' && `It is currently being used by VNet ${overlap.vnet_name} in subscription ${overlap.subscription_name}.`}
-              {overlap.type === 'Subnet' && `It is currently being used by subnet ${overlap.subnet_cidr} in VNet ${overlap.vnet_name} in subscription ${overlap.subscription_name}.`}
-            </li>
+      <FormControl variant="outlined" style={{ minWidth: 120, marginRight: '10px' }}>
+        <InputLabel>Region</InputLabel>
+        <Select
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+          label="Region"
+        >
+          {azureRegions.map((region) => (
+            <MenuItem key={region.value} value={region.value}>{region.name}</MenuItem>
           ))}
-        </ul>
-      )}
+        </Select>
+      </FormControl>
+      <TextField
+        label="CIDR"
+        variant="outlined"
+        value={cidr}
+        onChange={(e) => setCidr(e.target.value)}
+        style={{ marginRight: '10px' }}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleCreate}
+        disabled={loading}
+      >
+        Create
+      </Button>
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={fetchAllocations}
+        disabled={loading}
+        style={{ marginLeft: '10px' }}
+      >
+        Refresh
+      </Button>
+
+      <Typography variant="h5" gutterBottom style={{ marginTop: '20px' }}>Allocations</Typography>
+      <TableContainer component={Paper} sx={{ marginTop: '10px' }}>
+        <Table aria-label="Allocations Table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Allocation Name</TableCell>
+              <TableCell>Region</TableCell>
+              <TableCell>CIDR</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {allocations.map((alloc, index) => (
+              <TableRow key={index}>
+                <TableCell>{alloc.allocationName}</TableCell>
+                <TableCell>{alloc.region}</TableCell>
+                <TableCell>{alloc.cidr}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
 
-export default CheckIP;
+export default Allocations;

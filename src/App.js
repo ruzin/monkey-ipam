@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import VNetDetails from './VNetDetails';
 import CheckIP from './CheckIP';
+import Allocations from './Allocations';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -89,6 +90,7 @@ function NavigationBar() {
         <nav style={{ display: 'flex' }}>
           {isAuthenticated && (
             <>
+              <StyledLink to="/allocations">Allocations</StyledLink>
               <StyledLink to="/vnets">VNet Details</StyledLink>
               <StyledLink to="/check-ip">CheckIP</StyledLink>
             </>
@@ -108,6 +110,7 @@ function App() {
         <Container style={{ marginTop: '20px' }} maxWidth={false}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/allocations" element={<ProtectedRoute><Allocations /></ProtectedRoute>} />
             <Route path="/vnets" element={<ProtectedRoute><VNetDetails /></ProtectedRoute>} />
             <Route path="/check-ip" element={<ProtectedRoute><CheckIP /></ProtectedRoute>} />
           </Routes>
