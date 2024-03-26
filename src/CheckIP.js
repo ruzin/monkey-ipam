@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CircularProgress } from '@mui/material';
 
 function CheckIP() {
   const [cidr, setCIDR] = useState('');
@@ -14,9 +15,9 @@ function CheckIP() {
       const response = await fetch('/api/check_cidrs', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cidr })
+        body: JSON.stringify({ cidr }),
       });
       const data = await response.json();
       if (data.available) {
@@ -32,7 +33,14 @@ function CheckIP() {
     }
   };
 
-  const resultStyle = result ? { color: result.color, marginTop: '10px', fontSize: '16px' } : {};
+  // Early return for loading state
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '20px' }}>
@@ -43,7 +51,7 @@ function CheckIP() {
         placeholder="Enter CIDR"
         style={{ padding: '10px', marginRight: '10px' }}
       />
-      
+
       <button
         onClick={handleCheckIP}
         style={{
@@ -56,12 +64,11 @@ function CheckIP() {
       >
         Check IP
       </button>
-      {loading && <div style={{ color: 'green', marginTop: '10px' }}>Loading...</div>}
-      {result && <div style={resultStyle}>{result.message}</div>}
+      {result && <div style={{ color: result.color, marginTop: '10px', fontSize: '16px' }}>{result.message}</div>}
       {!loading && overlaps.length > 0 && (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
+        <ul style={{ listStyleType: 'none', padding: 0, marginTop: '20px' }}>
           {overlaps.map((overlap, index) => (
-            <li key={index} style={{ color: 'blue' }}>
+            <li key={index} style={{ color: 'blue', marginTop: '10px' }}>
               {overlap.type === 'VNet' && `It is currently being used by VNet ${overlap.vnet_name} in subscription ${overlap.subscription_name}.`}
               {overlap.type === 'Subnet' && `It is currently being used by subnet ${overlap.subnet_cidr} in VNet ${overlap.vnet_name} in subscription ${overlap.subscription_name}.`}
             </li>
