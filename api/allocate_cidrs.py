@@ -5,6 +5,8 @@ import os
 import ipaddress
 
 credentials = DefaultAzureCredential()
+table_name = "AllocateCidrRangeTable"
+azure_storage_endpoint = os.environ['AzureTableStorageEndpoint']
 
 bp = func.Blueprint()
 
@@ -31,9 +33,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         ipaddress.ip_network(cidr)
     except ValueError as e:
         return func.HttpResponse(f"Invalid CIDR: {str(e)}", status_code=400)
-
-    azure_storage_endpoint = os.environ['AzureTableStorageEndpoint']
-    table_name = "AllocateCidrRangeTable"
     
     table_service_client = TableServiceClient(endpoint=azure_storage_endpoint,
         credential=credentials)
