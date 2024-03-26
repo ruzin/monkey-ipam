@@ -14,6 +14,8 @@ import {
   Typography,
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { CircularProgress } from '@mui/material';
+
 
 function VNetDetails() {
   const [vnets, setVnets] = useState([]);
@@ -74,7 +76,11 @@ function VNetDetails() {
   const makeSelectItems = (key) => [...new Set(vnets.map(item => item[key]))];
 
   if (loading) {
-    return <Typography color="green" style={{ margin: '20px', textAlign: 'center' }}>Loading...</Typography>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
