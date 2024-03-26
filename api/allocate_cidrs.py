@@ -35,7 +35,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     azure_storage_endpoint = os.environ['AzureTableStorageEndpoint']
     table_name = "AllocateCidrRangeTable"
     
-    table_service_client = TableServiceClient.from_connection_string(endpoint=azure_storage_endpoint,
+    table_service_client = TableServiceClient(endpoint=azure_storage_endpoint,
         credential=credentials)
     table_client = table_service_client.get_table_client(table_name=table_name)
     
