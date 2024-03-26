@@ -1,7 +1,10 @@
 import azure.functions as func
 from azure.data.tables import TableServiceClient
+from azure.identity import DefaultAzureCredential
 import os
 import ipaddress
+
+credentials = DefaultAzureCredential()
 
 bp = func.Blueprint()
 
@@ -29,10 +32,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     except ValueError as e:
         return func.HttpResponse(f"Invalid CIDR: {str(e)}", status_code=400)
 
-    connection_string = os.environ['AzureTableStorageConnectionString']
+    azure_storage_endpoint = os.environ['AzureTableStorageEndpoint']
     table_name = "AllocateCidrRangeTable"
     
-    table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
+    table_service_client = TableServiceClient.from_connection_string(endpoint=azure_storage_endpoint,
+        credential=credentials)
     table_client = table_service_client.get_table_client(table_name=table_name)
     
     entity = {
