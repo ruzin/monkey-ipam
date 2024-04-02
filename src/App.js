@@ -85,7 +85,7 @@ function NavigationBar() {
           <img src={logo} alt="Azure Logo" style={{ height: '24px', marginRight: '10px' }} />    </Link>
 
         <Typography variant="h6" sx={{ color: 'white', flexGrow: 1 }}>
-          <StyledLink style={{ padding: 0, border: 0 }} to="/">Azure IPAM</StyledLink>
+          <StyledLink style={{ padding: 0, border: 0 }} to="/">Saber Azure IPAM</StyledLink>
         </Typography>
         <nav style={{ display: 'flex' }}>
           {isAuthenticated && (
