@@ -91,7 +91,7 @@ function NavigationBar() {
           {isAuthenticated && (
             <>
               <StyledLink to="/allocations">Allocations</StyledLink>
-              <StyledLink to="/vnets">VNet Details</StyledLink>
+              <StyledLink to="/vnets">Networks</StyledLink>
               <StyledLink to="/check-ip">CheckIP</StyledLink>
             </>
           )}
